@@ -1,11 +1,11 @@
 # BigBiGAN
-Runway Port of BigBiGAN from the paper "Large Scale Adversarial Representation Learning"
+Runway Port of BigBiGAN from Tensorflow Hub.
 
 ## Paper
 The BigBiGAN was introduced in the paper [Large Scale Adversarial Representation Learning](https://arxiv.org/abs/1907.02544) by Jeff Donahue, Karen Simonyan at DeepMind.
 
 ## Colab Notebook"
-Code was adapted from the [Colab Notebook](https://colab.research.google.com/github/tensorflow/hub/blob/master/examples/colab/bigbigan_with_tf_hub.ipynb) with weights provided by DeepMind.
+Code was adapted from the [Colab Notebook](https://colab.research.google.com/github/tensorflow/hub/blob/master/examples/colab/bigbigan_with_tf_hub.ipynb) with [Weights](https://tfhub.dev/s?q=bigbigan) provided by DeepMind. 
 
 
 <img src="https://miro.medium.com/max/1188/0*tLSh3dAFki_07Bse">
