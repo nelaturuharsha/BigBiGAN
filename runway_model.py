@@ -13,15 +13,6 @@ import runway
 from runway.data_types import *
 
 
-#def image_processing(image):
-	#x = tf.read_file(filename)
-	#x_decode = tf.image.decode_image(image, channels=3)
-
-	#img = tf.image.resize_bicubic([x_decode], [256, 256])[0]
-	#img = tf.cast(img, tf.float32) / 127.5 - 1
-
-	#return img
-
 def image_to_uint8(x):
   """Converts [-1, 1] float array to [0, 255] uint8."""
   x = np.asarray(x)
