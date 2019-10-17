@@ -1,4 +1,5 @@
 import tensorflow_hub as hub
+from pprint import pformat
 
 module_path = "https://tfhub.dev/deepmind/bigbigan-revnet50x4/1"
 
