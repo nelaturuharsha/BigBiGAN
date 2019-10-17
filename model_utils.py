@@ -69,34 +69,3 @@ def image_to_uint8(x):
   x = np.clip(x, 0, 255)
   x = x.astype(np.uint8)
   return x
-
-
-def get_flowers_data():
-  """Returns a [32, 256, 256, 3] np.array of preprocessed TF-Flowers samples."""
-  import tensorflow_datasets as tfds
-  ds, info = tfds.load('tf_flowers', split='train', with_info=True)
-
-  # Just get the images themselves as we don't need labels for this demo.
-  ds = ds.map(lambda x: x['image'])
-
-  # Filter out small images (with minor edge length <256).
-  ds = ds.filter(lambda x: tf.reduce_min(tf.shape(x)[:2]) >= 256)
-
-  # Take the center square crop of the image and resize to 256x256.
-  def crop_and_resize(image):
-    imsize = tf.shape(image)[:2]
-    minor_edge = tf.reduce_min(imsize)
-    start = (imsize - minor_edge) // 2
-    stop = start + minor_edge
-    cropped_image = image[start[0] : stop[0], start[1] : stop[1]]
-    resized_image = tf.image.resize_bicubic([cropped_image], [256, 256])[0]
-    return resized_image
-  ds = ds.map(crop_and_resize)
-
-  # Convert images from [0, 255] uint8 to [-1, 1] float32.
-  ds = ds.map(lambda image: tf.cast(image, tf.float32) / (255. / 2.) - 1)
-
-  # Take the first 32 samples.
-  ds = ds.take(32)
-
-  return np.array(list(tfds.as_numpy(ds)))
