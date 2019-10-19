@@ -1,5 +1,4 @@
 import io
-import IPython.display
 import PIL.Image
 from PIL import Image
 from pprint import pformat
