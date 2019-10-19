@@ -1,7 +1,7 @@
 import tensorflow_hub as hub
 from pprint import pformat
 
-module_path = "https://tfhub.dev/deepmind/bigbigan-revnet50/1"
+module_path = 'https://tfhub.dev/deepmind/bigbigan-resnet50/1'
 
 module = hub.Module(module_path)
 
