@@ -24,7 +24,7 @@ def image_to_uint8(x):
 def setup():
 	global bigbigan
 
-	module_path = 'https://tfhub.dev/deepmind/bigbigan-revnet50x4/1'
+	module_path = 'https://tfhub.dev/deepmind/bigbigan-revnet50/1'
 
 	module = hub.Module(module_path)
 	bigbigan = BigBiGAN(module)
