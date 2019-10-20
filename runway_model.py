@@ -20,44 +20,47 @@ def image_to_uint8(x):
   x = x.astype(np.uint8)
   return x
 
+g = None
+
 @runway.setup
 def setup():
-	global bigbigan
+    global bigbigan
+    global g
 
-	module_path = 'https://tfhub.dev/deepmind/bigbigan-resnet50/1'
+    module_path = 'https://tfhub.dev/deepmind/bigbigan-resnet50/1'
 
-	module = hub.Module(module_path)
-	bigbigan = BigBiGAN(module)
+    module = hub.Module(module_path)
+    bigbigan = BigBiGAN(module)
 
-	init = tf.global_variables_initializer()
-	sess = tf.Session()
-	sess.run(init)
+    g = tf.get_default_graph()
 
-	return sess
+    init = tf.global_variables_initializer()
+    sess = tf.Session()
+    sess.run(init)
+
+    enc_ph = bigbigan.make_encoder_ph()
+    z = bigbigan.encode(enc_ph, return_all_features=True)['z_mean']
+    recons = bigbigan.generate(z, upsample=True)
+
+    return {
+        'sess': sess,
+        'enc_ph': enc_ph,
+        'recons': recons
+    }
 
 generator_input = {"input_image" : runway.image}
 generator_output = {"output_image" : runway.image}
 
 @runway.command("generate_image", inputs=generator_input, outputs=generator_output, description="Generates Image from encoding")
-def generate_image(sess, inputs):
-	
-	enc_ph = bigbigan.make_encoder_ph()
-	recon_x = bigbigan.reconstruct_x(enc_ph, upsample=True)
-
-	image = np.array(inputs["input_image"])	
-	
-	#img = tf.image.resize_bicubic([image], [256, 256])[0]
-	img = cv2.resize(image, (256, 256), cv2.INTER_CUBIC)
-	img = (tf.cast(img, tf.float32) / 127.5 - 1).eval(session=sess)
-	
-	img = np.expand_dims(img, axis=0)
-	
-	_out_recons = sess.run(recon_x, feed_dict={enc_ph: img})
-
-	generated_image = imgrid(image_to_uint8(_out_recons), cols=1)
-
-	return {"output_image" : generated_image}
+def generate_image(model, inputs):
+    image = np.array(inputs["input_image"].resize((256, 256)))
+    image = image / 127.5 - 1
+    image = np.expand_dims(image, axis=0)
+    with g.as_default():
+        _out_recons = model['sess'].run(model['recons'], feed_dict={model['enc_ph']: image})
+    generated_image = imgrid(image_to_uint8(_out_recons), cols=1)
+    return {"output_image" : generated_image}
 
 
 if __name__ == "__main__":
-	runway.run()
+    runway.run()
